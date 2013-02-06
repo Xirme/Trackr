@@ -1,0 +1,15 @@
+name: Trackr
+main: org.kitteh.trackr.Trackr
+author: mbaxter
+description: Track all the things
+version: '${project.version}'
+permissions:
+  trackr.lookup:
+    default: op
+    description: Placeholder permission
+commands:
+  trackr:
+    permission: trackr.lookup
+    permission-message: You may not use this command
+    description: Placeholder command
+    usage: /trackr

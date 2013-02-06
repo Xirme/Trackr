@@ -1,0 +1,7 @@
+servername: cats
+mysql:
+  host: localhost
+  database: database
+  port: 3306
+  user: notroot
+  pass: notpassword
