@@ -8,9 +8,9 @@ import java.util.Date;
 import org.kitteh.tracker.Trackr;
 
 public class Kill extends Data {
-    private String killer;
-    private String victim;
-    private Timestamp timestamp;
+    private final String killer;
+    private final String victim;
+    private final Timestamp timestamp;
 
     public Kill(String killer, String victim) {
         super(DataType.KILL);

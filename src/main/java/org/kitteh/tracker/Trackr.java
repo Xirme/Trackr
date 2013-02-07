@@ -16,6 +16,7 @@ public class Trackr extends JavaPlugin {
     }
 
     private SQLManager sql;
+    private final DataTracker tracker = new DataTracker();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -48,6 +49,15 @@ public class Trackr extends JavaPlugin {
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        new UberListener(this);
+    }
+
+    DataTracker getDataTracker() {
+        return this.tracker;
+    }
+
+    SQLManager getSQL() {
+        return this.sql;
     }
 
 }

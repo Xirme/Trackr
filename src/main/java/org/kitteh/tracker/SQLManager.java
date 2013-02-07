@@ -38,6 +38,15 @@ public class SQLManager extends Thread {
         this.start();
     }
 
+    /**
+     * Add data to be saved
+     * 
+     * @param data
+     */
+    public void add(Data data) {
+        this.dataMap.get(data.getType()).add(data);
+    }
+
     public boolean isEmptied() {
         return this.emptied;
     }
