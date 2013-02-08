@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.kitteh.tracker.data.DataTracker;
 
 public class Trackr extends JavaPlugin {
 

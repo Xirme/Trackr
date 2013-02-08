@@ -44,7 +44,11 @@ public class SQLManager extends Thread {
      * @param data
      */
     public void add(Data data) {
-        this.dataMap.get(data.getType()).add(data);
+        final List<Data> list = this.dataMap.get(data.getType());
+        if ((data instanceof PersistentData) && list.contains(data)) {
+            return;
+        }
+        list.add(data);
     }
 
     public boolean isEmptied() {

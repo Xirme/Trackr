@@ -1,4 +1,4 @@
-package org.kitteh.tracker.data;
+package org.kitteh.tracker.data.elements;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import org.kitteh.tracker.Trackr;
+import org.kitteh.tracker.data.Data;
+import org.kitteh.tracker.data.DataType;
 
 public class Kill extends Data {
     private final String killer;

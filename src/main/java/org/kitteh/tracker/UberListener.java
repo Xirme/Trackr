@@ -6,7 +6,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.kitteh.tracker.data.Kill;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.kitteh.tracker.data.DataTracker;
+import org.kitteh.tracker.data.DataType;
+import org.kitteh.tracker.data.elements.Kill;
+import org.kitteh.tracker.data.elements.PlayerSession;
 
 public class UberListener implements Listener {
     private final DataTracker tracker;
@@ -26,5 +31,18 @@ public class UberListener implements Listener {
             final Player killer = (Player) leKiller;
             this.sql.add(new Kill(killer.getName(), victim.getName()));
         }
+    }
+
+    @EventHandler
+    public void playerJoin(PlayerJoinEvent event) {
+        final String name = event.getPlayer().getName();
+        final PlayerSession session = new PlayerSession(name);
+        this.tracker.getPlayr(name).setData(session);
+        this.sql.add(session);
+    }
+
+    @EventHandler
+    public void playerQuit(PlayerQuitEvent event) {
+        this.sql.add(this.tracker.getPlayr(event.getPlayer()).getData(DataType.PLAYER_SESSION));
     }
 }
