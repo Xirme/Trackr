@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   `server` varchar(32) NOT NULL,
   `player` varchar(16) NOT NULL,
   `start` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `duration` int(10) unsigned NOT NULL,
+  `duration` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `server` (`server`),
   KEY `player` (`player`)

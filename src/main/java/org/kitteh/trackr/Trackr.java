@@ -46,7 +46,7 @@ public class Trackr extends JavaPlugin {
         try {
             this.sql = new SQLManager(this, host, database, port, user, pass);
         } catch (ClassNotFoundException | SQLException e) {
-            this.getLogger().log(Level.SEVERE, "Could not start up SQL", e);
+            this.getLogger().log(Level.SEVERE, "Could not start up SQL: " + e.getMessage());
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }

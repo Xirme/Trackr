@@ -79,7 +79,7 @@ public class SQLManager extends Thread {
         this.interrupt();
     }
 
-    private void connectionProd() {
+    private void connectionProd() throws SQLException {
         boolean valid = false;
         try {
             valid = this.connection.isValid(1);
@@ -91,24 +91,20 @@ public class SQLManager extends Thread {
         }
     }
 
-    private void newConnection() {
-        try {
-            this.connection = DriverManager.getConnection(this.url, this.user, this.password);
-        } catch (final SQLException e) {
-            this.plugin.getLogger().log(Level.SEVERE, "Unable to initialize connection", e);
-        }
+    private void newConnection() throws SQLException {
+        this.connection = DriverManager.getConnection(this.url, this.user, this.password);
     }
 
     private void process() {
-        this.connectionProd();
-        for (final DataType type : DataType.values()) {
-            final List<Data> list = this.dataMap.get(type);
-            if (list.isEmpty()) {
-                continue;
-            }
-            Data data = list.get(0);
-            int batch = 0;
-            try {
+        try {
+            this.connectionProd();
+            for (final DataType type : DataType.values()) {
+                final List<Data> list = this.dataMap.get(type);
+                if (list.isEmpty()) {
+                    continue;
+                }
+                Data data = list.get(0);
+                int batch = 0;
                 PersistentData pData;
                 final PreparedStatement statement = data.getStatement(this.connection);
                 PreparedStatement initStatement = null;
@@ -122,8 +118,11 @@ public class SQLManager extends Thread {
                     data = list.get(0);
                     if (type.isPersistent()) {
                         pData = (PersistentData) data;
-                        pData.populateInitStatement(initStatement);
-                        initStatement.executeUpdate();
+                        if (!pData.isStarted()) {
+                            pData.populateInitStatement(initStatement);
+                            initStatement.executeUpdate();
+                            pData.setStarted();
+                        }
                         pData.populateIDStatement(getIDStatement);
                         final ResultSet result = getIDStatement.executeQuery();
                         result.first();
@@ -139,9 +138,12 @@ public class SQLManager extends Thread {
                     }
                     list.remove(0);
                 }
-            } catch (final SQLException e) {
-                this.plugin.getLogger().log(Level.SEVERE, "Error while saving data. Waiting until next round to try again.", e);
+                if (batch > 0) {
+                    statement.executeBatch();
+                }
             }
+        } catch (final SQLException e) {
+            this.plugin.getLogger().log(Level.SEVERE, "Error while saving data. Waiting until next round to try again: " + e.getMessage());
         }
     }
 }

@@ -33,8 +33,8 @@ public class PlayerSession extends PersistentData {
 
     @Override
     public void populateStatement(PreparedStatement statement) throws SQLException {
-        statement.setInt(1, this.getID());
-        statement.setLong(2, new Date().getTime() - this.start.getTime());
+        statement.setInt(1, (int) ((new Date().getTime() - this.start.getTime()) / 1000));
+        statement.setInt(2, this.getID());
     }
 
     @Override

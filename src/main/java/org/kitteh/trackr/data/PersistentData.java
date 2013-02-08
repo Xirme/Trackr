@@ -30,7 +30,7 @@ public abstract class PersistentData extends Data {
 
     public abstract void populateIDStatement(PreparedStatement statement) throws SQLException;
 
-    protected int getID() {
+    public int getID() {
         return this.id;
     }
 
