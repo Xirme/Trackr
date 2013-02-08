@@ -1,9 +1,9 @@
-package org.kitteh.tracker.data;
+package org.kitteh.trackr.data;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
-import org.kitteh.tracker.util.LCMap;
+import org.kitteh.trackr.util.LCMap;
 
 public class DataTracker {
     private final LCMap<Playr> players = new LCMap<Playr>(new ConcurrentHashMap<String, Playr>());

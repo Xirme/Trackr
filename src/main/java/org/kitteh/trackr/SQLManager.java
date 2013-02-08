@@ -1,4 +1,4 @@
-package org.kitteh.tracker;
+package org.kitteh.trackr;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.kitteh.tracker.data.Data;
-import org.kitteh.tracker.data.DataType;
-import org.kitteh.tracker.data.PersistentData;
+import org.kitteh.trackr.data.Data;
+import org.kitteh.trackr.data.DataType;
+import org.kitteh.trackr.data.PersistentData;
 
 public class SQLManager extends Thread {
     private final String url, user, password;

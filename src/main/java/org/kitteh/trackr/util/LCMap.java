@@ -1,4 +1,4 @@
-package org.kitteh.tracker.util;
+package org.kitteh.trackr.util;
 
 import java.util.Map;
 

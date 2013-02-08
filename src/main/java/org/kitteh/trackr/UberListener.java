@@ -1,4 +1,4 @@
-package org.kitteh.tracker;
+package org.kitteh.trackr;
 
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -8,10 +8,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.kitteh.tracker.data.DataTracker;
-import org.kitteh.tracker.data.DataType;
-import org.kitteh.tracker.data.elements.Kill;
-import org.kitteh.tracker.data.elements.PlayerSession;
+import org.kitteh.trackr.data.DataTracker;
+import org.kitteh.trackr.data.DataType;
+import org.kitteh.trackr.data.elements.Kill;
+import org.kitteh.trackr.data.elements.PlayerSession;
 
 public class UberListener implements Listener {
     private final DataTracker tracker;

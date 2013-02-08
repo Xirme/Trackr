@@ -1,4 +1,4 @@
-package org.kitteh.tracker;
+package org.kitteh.trackr;
 
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.kitteh.tracker.data.DataTracker;
+import org.kitteh.trackr.data.DataTracker;
 
 public class Trackr extends JavaPlugin {
 

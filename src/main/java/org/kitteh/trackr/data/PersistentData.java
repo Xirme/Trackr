@@ -1,4 +1,4 @@
-package org.kitteh.tracker.data;
+package org.kitteh.trackr.data;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
