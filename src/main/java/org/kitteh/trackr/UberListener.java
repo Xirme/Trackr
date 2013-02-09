@@ -13,6 +13,9 @@ import org.kitteh.trackr.data.DataType;
 import org.kitteh.trackr.data.elements.Kill;
 import org.kitteh.trackr.data.elements.PlayerSession;
 
+/**
+ * Self-registering listener of love
+ */
 public class UberListener implements Listener {
     private final DataTracker tracker;
     private final SQLManager sql;

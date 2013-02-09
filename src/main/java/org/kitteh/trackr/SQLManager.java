@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import org.kitteh.trackr.data.Data;
 import org.kitteh.trackr.data.DataType;
 import org.kitteh.trackr.data.PersistentData;
+import org.kitteh.trackr.data.elements.ServerSession;
 
 public class SQLManager extends Thread {
     private final String url, user, password;
@@ -23,6 +24,10 @@ public class SQLManager extends Thread {
     private final Trackr plugin;
     private boolean running = true;
     private boolean emptied = false;
+
+    private long lastPing;
+    private ServerSession session;
+    private boolean hesDeadJim = false;
 
     public SQLManager(Trackr plugin, String host, String database, int port, String username, String password) throws ClassNotFoundException, SQLException {
         this.setName("Trackr Data Savr");
@@ -35,24 +40,17 @@ public class SQLManager extends Thread {
         for (final DataType type : DataType.values()) {
             this.dataMap.put(type, Collections.synchronizedList(new ArrayList<Data>()));
         }
+
+        this.lastPing = System.currentTimeMillis();
+        this.session = new ServerSession();
+        plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
+            @Override
+            public void run() {
+                SQLManager.this.lastPing = System.currentTimeMillis();
+            }
+        }, 5 * 20, 5 * 20);
+
         this.start();
-    }
-
-    /**
-     * Add data to be saved
-     * 
-     * @param data
-     */
-    public void add(Data data) {
-        final List<Data> list = this.dataMap.get(data.getType());
-        if ((data instanceof PersistentData) && list.contains(data)) {
-            return;
-        }
-        list.add(data);
-    }
-
-    public boolean isEmptied() {
-        return this.emptied;
     }
 
     @Override
@@ -66,17 +64,20 @@ public class SQLManager extends Thread {
             } catch (final InterruptedException e) {
                 this.running = false;
             }
+            if ((System.currentTimeMillis() - this.lastPing) < (5 * 60 * 1000)) {
+                if (this.hesDeadJim) {
+                    this.plugin.getServer().getLogger().info("Server seems back alive again! Recording new uptime.");
+                    this.session = new ServerSession();
+                }
+                this.add(this.session);
+            } else {
+                this.hesDeadJim = true;
+                this.plugin.getServer().getLogger().info("Server seems to have taken a nap. Pausing uptime recording.");
+            }
             this.process();
         }
         this.process(); // One more time!
         this.emptied = true;
-    }
-
-    /**
-     * Dump all remaining items in a final push
-     */
-    public void shutdown() {
-        this.interrupt();
     }
 
     private void connectionProd() throws SQLException {
@@ -96,6 +97,9 @@ public class SQLManager extends Thread {
     }
 
     private void process() {
+        if (this.hesDeadJim) {
+            return;
+        }
         try {
             this.connectionProd();
             for (final DataType type : DataType.values()) {
@@ -111,7 +115,7 @@ public class SQLManager extends Thread {
                 PreparedStatement getIDStatement = null;
                 if (type.isPersistent()) {
                     pData = (PersistentData) data;
-                    initStatement = pData.getInit(this.connection);
+                    initStatement = pData.getInitStatement(this.connection);
                     getIDStatement = pData.getIDStatement(this.connection);
                 }
                 while (!list.isEmpty()) {
@@ -145,5 +149,34 @@ public class SQLManager extends Thread {
         } catch (final SQLException e) {
             this.plugin.getLogger().log(Level.SEVERE, "Error while saving data. Waiting until next round to try again: " + e.getMessage());
         }
+    }
+
+    /**
+     * Add data to be saved
+     * 
+     * @param data
+     */
+    void add(Data data) {
+        final List<Data> list = this.dataMap.get(data.getType());
+        if ((data instanceof PersistentData) && list.contains(data)) {
+            return;
+        }
+        list.add(data);
+    }
+
+    /**
+     * Has the SQLManager emptied its queue for shutdown
+     * 
+     * @return if it's ok to shut down
+     */
+    boolean isEmptied() {
+        return this.emptied;
+    }
+
+    /**
+     * Dump all remaining items in a final push
+     */
+    void shutdown() {
+        this.interrupt();
     }
 }

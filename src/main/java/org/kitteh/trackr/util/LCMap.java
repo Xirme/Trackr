@@ -2,6 +2,12 @@ package org.kitteh.trackr.util;
 
 import java.util.Map;
 
+/**
+ * It's a map! With lowercase String keys! And a limited methods list!
+ * 
+ * @param <V>
+ *            Value type
+ */
 public class LCMap<V> {
 
     private final Map<String, V> map;

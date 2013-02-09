@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `kills` (
   KEY `victim` (`victim`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-CREATE TABLE IF NOT EXISTS `sessions` (
+CREATE TABLE IF NOT EXISTS `player_sessions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `server` varchar(32) NOT NULL,
   `player` varchar(16) NOT NULL,
@@ -19,4 +19,13 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   PRIMARY KEY (`id`),
   KEY `server` (`server`),
   KEY `player` (`player`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `server_sessions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `server` varchar(32) NOT NULL,
+  `start` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `duration` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `server` (`server`),
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

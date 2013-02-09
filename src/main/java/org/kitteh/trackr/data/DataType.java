@@ -1,8 +1,10 @@
 package org.kitteh.trackr.data;
 
 public enum DataType {
+
     KILL,
-    PLAYER_SESSION(true);
+    PLAYER_SESSION(true),
+    SERVER_SESSION(true);
     private boolean persistent;
 
     private DataType() {
@@ -13,6 +15,11 @@ public enum DataType {
         this.persistent = persistent;
     }
 
+    /**
+     * Gets if this data type is persistent
+     * 
+     * @return true if persistent
+     */
     public boolean isPersistent() {
         return this.persistent;
     }

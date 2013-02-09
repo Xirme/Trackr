@@ -9,6 +9,9 @@ import org.kitteh.trackr.Trackr;
 import org.kitteh.trackr.data.Data;
 import org.kitteh.trackr.data.DataType;
 
+/**
+ * Murder tracker
+ */
 public class Kill extends Data {
     private final String killer;
     private final String victim;
