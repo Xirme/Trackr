@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.kitteh.trackr.data.DataTracker;
+import org.kitteh.trackr.data.elements.ServerSession;
 
 public class Trackr extends JavaPlugin {
 
@@ -17,6 +18,7 @@ public class Trackr extends JavaPlugin {
     }
 
     private SQLManager sql;
+    private ServerSession session;
     private final DataTracker tracker = new DataTracker();
 
     @Override
@@ -50,6 +52,7 @@ public class Trackr extends JavaPlugin {
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        this.resetServerSession();
         new UberListener(this);
     }
 
@@ -59,6 +62,14 @@ public class Trackr extends JavaPlugin {
 
     SQLManager getSQL() {
         return this.sql;
+    }
+
+    public ServerSession getServerSession() {
+        return session;
+    }
+
+    public void resetServerSession() {
+        this.session = new ServerSession();
     }
 
 }

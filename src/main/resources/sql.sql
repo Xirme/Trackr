@@ -24,8 +24,10 @@ CREATE TABLE IF NOT EXISTS `player_sessions` (
 CREATE TABLE IF NOT EXISTS `server_sessions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `server` varchar(32) NOT NULL,
+  `maxplayers` int(11) NOT NULL DEFAULT '0',
   `start` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `duration` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `server` (`server`),
+  KEY `maxplayers` (`maxplayers`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

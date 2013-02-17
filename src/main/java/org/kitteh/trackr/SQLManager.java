@@ -15,7 +15,6 @@ import java.util.logging.Level;
 import org.kitteh.trackr.data.Data;
 import org.kitteh.trackr.data.DataType;
 import org.kitteh.trackr.data.PersistentData;
-import org.kitteh.trackr.data.elements.ServerSession;
 
 public class SQLManager extends Thread {
     private final String url, user, password;
@@ -26,7 +25,6 @@ public class SQLManager extends Thread {
     private boolean emptied = false;
 
     private long lastPing;
-    private ServerSession session;
     private boolean hesDeadJim = false;
 
     public SQLManager(Trackr plugin, String host, String database, int port, String username, String password) throws ClassNotFoundException, SQLException {
@@ -42,7 +40,6 @@ public class SQLManager extends Thread {
         }
 
         this.lastPing = System.currentTimeMillis();
-        this.session = new ServerSession();
         plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
             @Override
             public void run() {
@@ -67,9 +64,9 @@ public class SQLManager extends Thread {
             if ((System.currentTimeMillis() - this.lastPing) < (5 * 60 * 1000)) {
                 if (this.hesDeadJim) {
                     this.plugin.getServer().getLogger().info("Server seems back alive again! Recording new uptime.");
-                    this.session = new ServerSession();
+                    this.plugin.resetServerSession();
                 }
-                this.add(this.session);
+                this.add(plugin.getServerSession());
             } else {
                 this.hesDeadJim = true;
                 this.plugin.getServer().getLogger().info("Server seems to have taken a nap. Pausing uptime recording.");

@@ -15,6 +15,7 @@ import org.kitteh.trackr.data.PersistentData;
  */
 public class ServerSession extends PersistentData {
     private final Timestamp start;
+    private int maxPlayers = 0;
 
     public ServerSession() {
         super(DataType.SERVER_SESSION);
@@ -35,7 +36,14 @@ public class ServerSession extends PersistentData {
     @Override
     public void populateStatement(PreparedStatement statement) throws SQLException {
         statement.setInt(1, (int) ((new Date().getTime() - this.start.getTime()) / 1000));
-        statement.setInt(2, this.getID());
+        statement.setInt(2, maxPlayers);
+        statement.setInt(3, this.getID());
+    }
+
+    public void playerUpdate(int current) {
+        if (current > maxPlayers) {
+            maxPlayers = current;
+        }
     }
 
     @Override
@@ -50,6 +58,6 @@ public class ServerSession extends PersistentData {
 
     @Override
     protected String getStatementString() {
-        return "UPDATE `server_sessions` SET `duration` = ? WHERE `id` = ?;";
+        return "UPDATE `server_sessions` SET `duration` = ?, `maxplayers` = ? WHERE `id` = ?;";
     }
 }
