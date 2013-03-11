@@ -1,8 +1,9 @@
 CREATE TABLE IF NOT EXISTS `kills` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `server` varchar(32) NOT NULL,
-  `killer` varchar(16) NOT NULL,
-  `victim` varchar(16) NOT NULL,
+  `killer` varchar(64) NOT NULL,
+  `weapon` varchar(64) NOT NULL,
+  `victim` varchar(64) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `server` (`server`),

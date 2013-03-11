@@ -1,11 +1,9 @@
 package org.kitteh.trackr;
 
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.kitteh.trackr.data.DataTracker;
@@ -27,13 +25,8 @@ public class UberListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void playerDeath(PlayerDeathEvent event) {
-        final Player victim = event.getEntity();
-        final LivingEntity leKiller = victim.getKiller();
-        if (leKiller instanceof Player) {
-            final Player killer = (Player) leKiller;
-            this.sql.add(new Kill(killer.getName(), victim.getName()));
-        }
+    public void playerDeath(EntityDeathEvent event) {
+        this.sql.add(new Kill(event.getEntity().getKiller(), event.getEntity()));
     }
 
     @EventHandler
