@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -34,22 +33,14 @@ public class Kill extends Data {
             this.weapon = "unknown";
             return;
         }
-        // No this doesn't work. Uh. Hmm. Maybe we get to listen and track damage?
         if (killer instanceof Projectile) {
-            Projectile projectile = (Projectile) killer;
-            LivingEntity shooter = projectile.getShooter();
-            if (shooter == null) {
-                this.killer = "unknown";
-                this.weapon = projectile.getType().name();
-            } else {
-                this.killer = this.typeOrName(shooter);
-                this.weapon = typeOrName(projectile);
-            }
+            this.killer = Trackr.getInstance().getDamageTracker().get(victim.getUniqueId());
+            this.weapon = killer.getType().name();
             return;
         }
         EntityEquipment equipment = killer.getEquipment();
         ItemStack hand = equipment.getItemInHand();
-        this.killer = this.typeOrName(killer);
+        this.killer = Kill.typeOrName(killer);
         if (hand == null) {
             weapon = "UNARMED";
         } else {
@@ -57,7 +48,7 @@ public class Kill extends Data {
         }
     }
 
-    private String typeOrName(Entity entity) {
+    public static String typeOrName(Entity entity) {
         return entity.getType().name() + (entity instanceof Player ? ":" + ((Player) entity).getName() : "");
     }
 

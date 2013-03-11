@@ -10,16 +10,20 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 
 import org.kitteh.trackr.data.Data;
 import org.kitteh.trackr.data.DataType;
 import org.kitteh.trackr.data.PersistentData;
+import org.kitteh.trackr.lookup.Lookup;
 
 public class SQLManager extends Thread {
     private final String url, user, password;
-    private Connection connection;
+    private Connection dataConnection;
+    private Connection lookupConnection;
     private final Map<DataType, List<Data>> dataMap = new EnumMap<DataType, List<Data>>(DataType.class);
+    private final ConcurrentLinkedQueue<Lookup> lookupQueue = new ConcurrentLinkedQueue<Lookup>();
     private final Trackr plugin;
     private boolean running = true;
     private boolean emptied = false;
@@ -52,53 +56,65 @@ public class SQLManager extends Thread {
 
     @Override
     public void run() {
+        long lastDataProcess = System.currentTimeMillis();
         while (this.running) {
             try {
                 if (Thread.interrupted()) {
                     throw new InterruptedException();
                 }
-                Thread.sleep(10000);
+                Thread.sleep(1000);
             } catch (final InterruptedException e) {
                 this.running = false;
             }
-            if ((System.currentTimeMillis() - this.lastPing) < (5 * 60 * 1000)) {
-                if (this.hesDeadJim) {
-                    this.plugin.getServer().getLogger().info("Server seems back alive again! Recording new uptime.");
-                    this.plugin.resetServerSession();
+            long now = System.currentTimeMillis();
+            if (now - lastDataProcess > 10000) {
+                this.processData();
+                lastDataProcess = now;
+
+                // Check if server is still actually alive. Only checking once every couple seconds because why not.
+                if ((now - this.lastPing) < (5 * 60 * 1000)) {
+                    if (this.hesDeadJim) {
+                        this.plugin.getServer().getLogger().info("Server seems back alive again! Recording new uptime.");
+                        this.plugin.resetServerSession();
+                    }
+                    this.add(plugin.getServerSession());
+                } else {
+                    this.hesDeadJim = true;
+                    this.plugin.getServer().getLogger().info("Server seems to have taken a nap. Pausing uptime recording.");
                 }
-                this.add(plugin.getServerSession());
-            } else {
-                this.hesDeadJim = true;
-                this.plugin.getServer().getLogger().info("Server seems to have taken a nap. Pausing uptime recording.");
             }
-            this.process();
+            this.processRequests();
         }
-        this.process(); // One more time!
+        this.processData(); // One more time!
         this.emptied = true;
     }
 
-    private void connectionProd() throws SQLException {
+    private Connection connectionProd(Connection connection) throws SQLException {
         boolean valid = false;
-        try {
-            valid = this.connection.isValid(1);
-        } catch (final SQLException e) {
-            // This is only an exception if I passed something less than 0 to the method. Ignore.
+        if (connection != null) {
+            try {
+                valid = connection.isValid(1);
+            } catch (final SQLException e) {
+                // This is only an exception if I passed something less than 0 to the method. Ignore.
+            }
         }
+
         if (!valid) {
-            this.newConnection();
+            connection = this.newConnection();
         }
+        return connection;
     }
 
-    private void newConnection() throws SQLException {
-        this.connection = DriverManager.getConnection(this.url, this.user, this.password);
+    private Connection newConnection() throws SQLException {
+        return DriverManager.getConnection(this.url, this.user, this.password);
     }
 
-    private void process() {
+    private void processData() {
         if (this.hesDeadJim) {
             return;
         }
         try {
-            this.connectionProd();
+            this.dataConnection = this.connectionProd(this.dataConnection);
             for (final DataType type : DataType.values()) {
                 final List<Data> list = this.dataMap.get(type);
                 if (list.isEmpty()) {
@@ -107,13 +123,13 @@ public class SQLManager extends Thread {
                 Data data = list.get(0);
                 int batch = 0;
                 PersistentData pData;
-                final PreparedStatement statement = data.getStatement(this.connection);
+                final PreparedStatement statement = data.getStatement(this.dataConnection);
                 PreparedStatement initStatement = null;
                 PreparedStatement getIDStatement = null;
                 if (type.isPersistent()) {
                     pData = (PersistentData) data;
-                    initStatement = pData.getInitStatement(this.connection);
-                    getIDStatement = pData.getIDStatement(this.connection);
+                    initStatement = pData.getInitStatement(this.dataConnection);
+                    getIDStatement = pData.getIDStatement(this.dataConnection);
                 }
                 while (!list.isEmpty()) {
                     data = list.get(0);
@@ -148,17 +164,57 @@ public class SQLManager extends Thread {
         }
     }
 
+    private void processRequests() {
+        long startTime = System.currentTimeMillis();
+        final List<Lookup> processed = new ArrayList<Lookup>();
+        while ((System.currentTimeMillis() - startTime < 200) && this.lookupQueue.peek() != null) {
+            System.out.println("while");
+            try {
+                this.lookupConnection = this.connectionProd(this.lookupConnection);
+                Lookup lookup = this.lookupQueue.peek();
+                lookup.process(this.lookupConnection);
+                processed.add(lookup);
+                System.out.println("Boop!");
+            } catch (SQLException e) {
+                this.plugin.getLogger().log(Level.SEVERE, "Error during lookups. Waiting until next round to try again: " + e.getMessage());
+                break;
+            }
+            this.lookupQueue.poll();
+            System.out.println("removed");
+        }
+        if (!processed.isEmpty()) {
+            System.out.println("nonempty!");
+            this.plugin.getServer().getScheduler().runTask(this.plugin, new Runnable() {
+
+                @Override
+                public void run() {
+                    System.out.println("run");
+                    for (Lookup lookup : processed) {
+                        lookup.send();
+                    }
+                }
+            });
+        }
+    }
+
     /**
      * Add data to be saved
      * 
      * @param data
      */
     void add(Data data) {
-        final List<Data> list = this.dataMap.get(data.getType());
-        if ((data instanceof PersistentData) && list.contains(data)) {
+        final List<Data> dataQueue = this.dataMap.get(data.getType());
+        if ((data instanceof PersistentData) && dataQueue.contains(data)) {
             return;
         }
-        list.add(data);
+        dataQueue.add(data);
+    }
+
+    /**
+     * 
+     */
+    void add(Lookup lookup) {
+        this.lookupQueue.add(lookup);
     }
 
     /**
