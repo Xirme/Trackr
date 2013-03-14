@@ -189,27 +189,22 @@ public class SQLManager extends Thread {
         long startTime = System.currentTimeMillis();
         final List<Lookup> processed = new ArrayList<Lookup>();
         while ((System.currentTimeMillis() - startTime < 200) && this.lookupQueue.peek() != null) {
-            System.out.println("while");
             try {
                 this.lookupConnection = this.connectionProd(this.lookupConnection);
                 Lookup lookup = this.lookupQueue.peek();
                 lookup.process(this.lookupConnection);
                 processed.add(lookup);
-                System.out.println("Boop!");
             } catch (SQLException e) {
                 this.plugin.getLogger().log(Level.SEVERE, "Error during lookups. Waiting until next round to try again: " + e.getMessage());
                 break;
             }
             this.lookupQueue.poll();
-            System.out.println("removed");
         }
         if (!processed.isEmpty()) {
-            System.out.println("nonempty!");
             this.plugin.getServer().getScheduler().runTask(this.plugin, new Runnable() {
 
                 @Override
                 public void run() {
-                    System.out.println("run");
                     for (Lookup lookup : processed) {
                         lookup.send();
                     }
