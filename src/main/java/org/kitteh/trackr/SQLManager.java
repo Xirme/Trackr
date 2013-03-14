@@ -1,5 +1,8 @@
 package org.kitteh.trackr;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -31,14 +34,32 @@ public class SQLManager extends Thread {
     private long lastPing;
     private boolean hesDeadJim = false;
 
-    public SQLManager(Trackr plugin, String host, String database, int port, String username, String password) throws ClassNotFoundException, SQLException {
+    public SQLManager(Trackr plugin, String host, String database, int port, String username, String password) throws ClassNotFoundException, SQLException, IOException {
         this.setName("Trackr Data Savr");
         this.plugin = plugin;
         Class.forName("com.mysql.jdbc.Driver");
         this.url = "jdbc:mysql://" + host + ":" + port + "/" + database;
         this.user = username;
         this.password = password;
-        this.newConnection();
+        this.dataConnection = this.newConnection();
+        this.lookupConnection = this.newConnection();
+        boolean hasServerSessions = this.dataConnection.getMetaData().getTables(null, null, "kills", null).first();
+        boolean hasPlayerSessions = this.dataConnection.getMetaData().getTables(null, null, "player_sessions", null).first();
+        boolean hasKills = this.dataConnection.getMetaData().getTables(null, null, "server_sessions", null).first();
+        if (!(hasServerSessions && hasPlayerSessions && hasKills)) {
+            final StringBuilder builder = new StringBuilder();
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(this.plugin.getResource("sql.sql")));
+            String next;
+            while ((next = reader.readLine()) != null) {
+                builder.append(next);
+            }
+            String[] split = builder.toString().split(";");
+            for (String statement : split) {
+                if (statement.contains("CREATE")) {
+                    this.dataConnection.createStatement().executeUpdate(statement);
+                }
+            }
+        }
         for (final DataType type : DataType.values()) {
             this.dataMap.put(type, Collections.synchronizedList(new ArrayList<Data>()));
         }

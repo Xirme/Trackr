@@ -1,5 +1,6 @@
 package org.kitteh.trackr;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
@@ -62,7 +63,7 @@ public class Trackr extends JavaPlugin {
         final String pass = this.getConfig().getString("mysql.pass");
         try {
             this.sql = new SQLManager(this, host, database, port, user, pass);
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (ClassNotFoundException | SQLException | IOException e) {
             this.getLogger().log(Level.SEVERE, "Could not start up SQL: " + e.getMessage());
             this.getServer().getPluginManager().disablePlugin(this);
             return;
