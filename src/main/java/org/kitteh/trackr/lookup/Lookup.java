@@ -11,12 +11,12 @@ import org.kitteh.trackr.Trackr;
 public abstract class Lookup {
 
     protected String[] toSend = null;
-    private final List<String> players;
+    private final List<String> receivers;
 
-    public Lookup(Player... players) {
-        this.players = new ArrayList<String>(players.length);
-        for (Player player : players) {
-            this.players.add(player.getName());
+    public Lookup(Player... receivers) {
+        this.receivers = new ArrayList<String>(receivers.length);
+        for (Player player : receivers) {
+            this.receivers.add(player.getName());
         }
     }
 
@@ -30,7 +30,7 @@ public abstract class Lookup {
 
     public void send() {
         if (toSend != null) {
-            for (String name : players) {
+            for (String name : receivers) {
                 Player player = Trackr.getInstance().getServer().getPlayerExact(name);
                 if (player != null) {
                     player.sendMessage(toSend);
