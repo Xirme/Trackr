@@ -30,7 +30,6 @@ public class SQLManager extends Thread {
     private final Trackr plugin;
     private boolean running = true;
     private boolean emptied = false;
-
     private long lastPing;
     private boolean hesDeadJim = false;
 

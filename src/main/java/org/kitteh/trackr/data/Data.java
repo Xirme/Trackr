@@ -47,5 +47,4 @@ public abstract class Data {
      * @return SQL query String
      */
     protected abstract String getStatementString();
-
 }

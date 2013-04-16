@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.kitteh.trackr.Trackr;
 
 public abstract class Lookup {
-
     protected String[] toSend = null;
     private final List<String> receivers;
 

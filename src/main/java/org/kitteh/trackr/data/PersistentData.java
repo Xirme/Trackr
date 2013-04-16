@@ -11,7 +11,6 @@ import java.sql.SQLException;
  * the statement (from Data) is for updating the record
  */
 public abstract class PersistentData extends Data {
-
     private boolean sessionStarted = false;
     private int id;
 
@@ -90,5 +89,4 @@ public abstract class PersistentData extends Data {
      * @return SQL query String
      */
     protected abstract String getInitStatementString();
-
 }

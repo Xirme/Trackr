@@ -9,7 +9,6 @@ import java.util.Map;
  *            Value type
  */
 public class LCMap<V> {
-
     private final Map<String, V> map;
 
     public LCMap(Map<String, V> starter) {
@@ -31,5 +30,4 @@ public class LCMap<V> {
     public V remove(Object key) {
         return this.map.remove(key.toString().toLowerCase());
     }
-
 }

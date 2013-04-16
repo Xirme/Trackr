@@ -14,7 +14,6 @@ import org.kitteh.trackr.data.elements.ServerSession;
 import org.kitteh.trackr.lookup.KDR;
 
 public class Trackr extends JavaPlugin {
-
     private static String servername;
     private static Trackr instance;
 
@@ -91,5 +90,4 @@ public class Trackr extends JavaPlugin {
     public void resetServerSession() {
         this.session = new ServerSession();
     }
-
 }

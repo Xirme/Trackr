@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import org.bukkit.entity.Player;
 
 public class KDR extends Lookup {
-
     private final String name;
     private int kills;
     private int deaths;
