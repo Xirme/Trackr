@@ -54,6 +54,6 @@ public class KDR extends Lookup {
         if (kdrString.length() > 5) {
             kdrString = kdrString.substring(0, 5);
         }
-        this.toSend = new String[] { name + "'s KDR is " + kdrString };
+        this.toSend = new String[] { this.name + "'s KDR is " + kdrString + " (" + this.kills + " kills, " + this.deaths + " deaths)" };
     }
 }
