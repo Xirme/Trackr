@@ -14,8 +14,8 @@ public class KDR extends Lookup {
     private int deaths;
     private double kdr;
 
-    public KDR(Player player) {
-        super(player);
+    public KDR(Player player, Player... receivers) {
+        super(receivers);
         this.name = player.getName();
     }
 
@@ -54,6 +54,6 @@ public class KDR extends Lookup {
         if (kdrString.length() > 5) {
             kdrString = kdrString.substring(0, 5);
         }
-        this.toSend = new String[] { "Your KDR is " + kdrString };
+        this.toSend = new String[] { name + "'s KDR is " + kdrString };
     }
 }
