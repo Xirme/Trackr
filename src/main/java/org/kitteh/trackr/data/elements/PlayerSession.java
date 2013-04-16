@@ -12,7 +12,7 @@ import org.kitteh.trackr.data.PersistentData;
 /**
  * A player's time spent on the server
  */
-public class PlayerSession extends PersistentData {
+public final class PlayerSession extends PersistentData {
     private final Timestamp start;
     private final String player;
 

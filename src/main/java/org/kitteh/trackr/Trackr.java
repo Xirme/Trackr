@@ -13,7 +13,7 @@ import org.kitteh.trackr.data.DataTracker;
 import org.kitteh.trackr.data.elements.ServerSession;
 import org.kitteh.trackr.lookup.KDR;
 
-public class Trackr extends JavaPlugin {
+public final class Trackr extends JavaPlugin {
     private static String servername;
     private static Trackr instance;
 

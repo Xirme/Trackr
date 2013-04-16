@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 import org.kitteh.trackr.util.LCMap;
 
-public class DataTracker {
+public final class DataTracker {
     private final LCMap<Playr> players = new LCMap<Playr>(new ConcurrentHashMap<String, Playr>());
 
     /**

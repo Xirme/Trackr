@@ -21,7 +21,7 @@ import org.kitteh.trackr.data.DataType;
 import org.kitteh.trackr.data.PersistentData;
 import org.kitteh.trackr.lookup.Lookup;
 
-public class SQLManager extends Thread {
+public final class SQLManager extends Thread {
     private final String url, user, password;
     private Connection dataConnection;
     private Connection lookupConnection;

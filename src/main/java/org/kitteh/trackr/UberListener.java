@@ -18,7 +18,7 @@ import org.kitteh.trackr.data.elements.PlayerSession;
 /**
  * Self-registering listener of love
  */
-public class UberListener implements Listener {
+public final class UberListener implements Listener {
     private final Trackr plugin;
 
     public UberListener(Trackr plugin) {

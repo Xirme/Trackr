@@ -18,7 +18,7 @@ import org.kitteh.trackr.data.DataType;
 /**
  * Murder tracker
  */
-public class Kill extends Data {
+public final class Kill extends Data {
     private final String killer;
     private final String victim;
     private final Timestamp timestamp;

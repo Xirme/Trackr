@@ -13,7 +13,7 @@ import org.kitteh.trackr.data.PersistentData;
  * Records the actual server's uptime.
  * Do not handle this normally. Handled by SQLManager.
  */
-public class ServerSession extends PersistentData {
+public final class ServerSession extends PersistentData {
     private final Timestamp start;
     private int maxPlayers = 0;
 

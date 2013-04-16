@@ -3,7 +3,7 @@ package org.kitteh.trackr.data;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class Playr {
+public final class Playr {
     private final Map<DataType, PersistentData> data = new EnumMap<DataType, PersistentData>(DataType.class);
 
     /**

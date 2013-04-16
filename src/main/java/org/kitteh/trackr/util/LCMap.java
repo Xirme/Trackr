@@ -8,7 +8,7 @@ import java.util.Map;
  * @param <V>
  *            Value type
  */
-public class LCMap<V> {
+public final class LCMap<V> {
     private final Map<String, V> map;
 
     public LCMap(Map<String, V> starter) {
